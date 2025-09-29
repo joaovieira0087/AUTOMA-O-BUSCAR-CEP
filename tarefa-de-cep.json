@@ -1,0 +1,210 @@
+{
+  "name": "tarefa de cep",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "50d7c002-044a-486e-aa16-40712f77e163",
+      "name": "When chat message received",
+      "webhookId": "f107e36d-3e52-4b7d-b0f2-8596ed8cf5ca",
+      "notes": "Digite apenas o CEP"
+    },
+    {
+      "parameters": {
+        "url": "=https://viacep.com.br/ws/{{ $json.chatInput }}/json/ ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        16,
+        -16
+      ],
+      "id": "29002d2d-f23e-4fd6-ba91-6f98dcc5f65c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.uf }}",
+                    "rightValue": "SP",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fd3fc600-a6dc-4bc5-88fe-a7de106894cf"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7620715a-08a9-47f2-95fb-f6538d76a29c",
+                    "leftValue": "={{ $json.uf }}",
+                    "rightValue": "RJ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b41bc7e4-8073-4ef4-b897-f0116ad4daff",
+                    "leftValue": "={{ $json.uf }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "5dd93ad1-2d47-4947-b2e8-159502883faa",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -176
+      ],
+      "id": "8ccd6ff5-de52-4f6f-93c0-b436d7d3daa2",
+      "name": "fluxo de tratamento para são paulo"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -16
+      ],
+      "id": "4c9e5b49-08fb-44a0-a48a-31a46aa5c743",
+      "name": "fluxo de tratamento para rio de janeiro"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        496,
+        144
+      ],
+      "id": "c90b1807-9050-427c-8f16-dbd2dfba3eb6",
+      "name": "não faz nada"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "fluxo de tratamento para são paulo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "fluxo de tratamento para rio de janeiro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "não faz nada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3d14c005-c369-4608-9049-8f9770103033",
+  "meta": {
+    "instanceId": "85dfcc2e1147aed395b0310cddd0590fde80fe627ae23a5e9f07b1797ff88987"
+  },
+  "id": "gSqljNBWY874WunU",
+  "tags": []
+}
